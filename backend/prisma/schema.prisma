@@ -1,0 +1,188 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model cities {
+  id           Int            @id @default(autoincrement())
+  name         String         @unique(map: "unique_city") @db.VarChar(100)
+  country_id   Int
+  countries    countries      @relation(fields: [country_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_country_id")
+  hockey_clubs hockey_clubs[]
+}
+
+model countries {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique(map: "unique_country") @db.VarChar(20)
+  cities  cities[]
+  players players[]
+}
+
+model employees {
+  id          Int         @id @default(autoincrement())
+  surname     String      @db.VarChar(50)
+  name        String      @db.VarChar(50)
+  patronymic  String?     @db.VarChar(50)
+  birthdate   DateTime    @db.Date
+  position_id Int
+  user_id     Int?
+  positions   positions   @relation(fields: [position_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users       users?      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  trainings   trainings[]
+}
+
+model fans {
+  id         Int       @id @default(autoincrement())
+  surname    String    @db.VarChar(50)
+  name       String    @db.VarChar(50)
+  patronymic String?   @db.VarChar(50)
+  birthdate  DateTime  @db.Date
+  user_id    Int
+  users      users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tickets    tickets[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model game_statistics {
+  game_id        Int
+  player_id      Int
+  minutes_played Int?
+  goals          Int?    @default(0)
+  assists        Int?    @default(0)
+  yellow_cards   Int?    @default(0)
+  red_cards      Int?    @default(0)
+  games          games   @relation(fields: [game_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  players        players @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([game_id, player_id])
+}
+
+model games {
+  id                                            Int               @id @default(autoincrement())
+  title                                         String            @db.VarChar(150)
+  game_date                                     DateTime          @db.Timestamptz(6)
+  address                                       String            @db.VarChar(150)
+  home_club_id                                  Int
+  away_club_id                                  Int
+  score_home                                    Int?              @default(0)
+  score_away                                    Int?              @default(0)
+  created_at                                    DateTime?         @default(now()) @db.Timestamptz(6)
+  updated_at                                    DateTime?         @default(now()) @db.Timestamptz(6)
+  game_statistics                               game_statistics[]
+  hockey_clubs_games_away_club_idTohockey_clubs hockey_clubs      @relation("games_away_club_idTohockey_clubs", fields: [away_club_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  hockey_clubs_games_home_club_idTohockey_clubs hockey_clubs      @relation("games_home_club_idTohockey_clubs", fields: [home_club_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tickets                                       tickets[]
+}
+
+model hockey_clubs {
+  id                                     Int       @id @default(autoincrement())
+  name                                   String    @db.VarChar(150)
+  city_id                                Int
+  created_at                             DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at                             DateTime? @default(now()) @db.Timestamptz(6)
+  games_games_away_club_idTohockey_clubs games[]   @relation("games_away_club_idTohockey_clubs")
+  games_games_home_club_idTohockey_clubs games[]   @relation("games_home_club_idTohockey_clubs")
+  cities                                 cities    @relation(fields: [city_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model player_roles {
+  id      Int       @id @default(autoincrement())
+  name    String    @db.VarChar(50)
+  players players[]
+}
+
+model player_statuses {
+  id      Int       @id @default(autoincrement())
+  name    String    @db.VarChar(50)
+  players players[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model players {
+  id                    Int                     @id @default(autoincrement())
+  surname               String                  @db.VarChar(50)
+  name                  String                  @db.VarChar(50)
+  patronymic            String?                 @db.VarChar(50)
+  birthdate             DateTime                @db.Date
+  user_id               Int
+  countries_id          Int
+  player_role_id        Int
+  jersey_number         Int?
+  height_cm             Int?
+  weight_kg             Int?
+  shooting_side         String?                 @db.VarChar(1)
+  status_id             Int?
+  game_statistics       game_statistics[]
+  player_statuses       player_statuses?        @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_players_player_statuses")
+  countries             countries               @relation(fields: [countries_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  player_roles          player_roles            @relation(fields: [player_role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                 users                   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  training_participants training_participants[]
+}
+
+model positions {
+  id        Int         @id @default(autoincrement())
+  position  String      @db.VarChar(50)
+  employees employees[]
+}
+
+model roles {
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(50)
+  users users[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tickets {
+  id            Int       @id @default(autoincrement())
+  game_id       Int
+  fan_id        Int
+  purchase_date DateTime? @default(now()) @db.Timestamptz(6)
+  price         Decimal   @db.Decimal(10, 2)
+  seat          String?   @db.VarChar(10)
+  fans          fans      @relation(fields: [fan_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  games         games     @relation(fields: [game_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model training_participants {
+  training_id Int
+  player_id   Int
+  attendance  Boolean?  @default(false)
+  players     players   @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  trainings   trainings @relation(fields: [training_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([training_id, player_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model trainings {
+  id                    Int                     @id @default(autoincrement())
+  title                 String                  @db.VarChar(150)
+  description           String?
+  training_date         DateTime                @db.Timestamptz(6)
+  location              String                  @db.VarChar(150)
+  duration              Int?
+  coach_id              Int?
+  created_at            DateTime?               @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime?               @default(now()) @db.Timestamptz(6)
+  training_participants training_participants[]
+  employees             employees?              @relation(fields: [coach_id], references: [id], onUpdate: NoAction)
+}
+
+model users {
+  id         Int         @id @default(autoincrement())
+  email      String      @unique @db.VarChar(150)
+  password   String
+  role_id    Int
+  avatar_url String?
+  created_at DateTime?   @default(now()) @db.Timestamptz(6)
+  updated_at DateTime?   @default(now()) @db.Timestamptz(6)
+  employees  employees[]
+  fans       fans[]
+  players    players[]
+  roles      roles       @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
