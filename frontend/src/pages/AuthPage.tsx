@@ -1,9 +1,7 @@
-import { Box, Paper, Stack, Typography, Button } from "@mui/material";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Box, Paper, Stack, Typography } from "@mui/material";
+import { Outlet } from "react-router-dom";
 
 export default function AuthPage() {
-  const navigate = useNavigate();
-
   return (
     <Box
       sx={{
@@ -15,11 +13,13 @@ export default function AuthPage() {
         bgcolor: "#fff",
       }}
     >
-      <Typography variant="h5">ХК «Паровоз»</Typography>
-      <Paper elevation={3} sx={{ borderRadius: 4 }}>
+      <Typography variant="h5" sx={{ marginBottom: "1.5rem" }}>
+        ХК «Паровоз»
+      </Typography>
+      <Paper elevation={3} sx={{ borderRadius: 4, p: "1rem", minWidth: "xl" }}>
         <Stack spacing={2} sx={{ p: 2, alignItems: "center" }}>
           <Typography variant="h4">Добро пожаловать!</Typography>
-          <Stack direction="row" spacing={2}>
+          {/* <Stack direction="row" spacing={2}>
             <Button variant="contained" onClick={() => navigate("/auth/login")}>
               Войти
             </Button>
@@ -29,7 +29,7 @@ export default function AuthPage() {
             >
               Регистрация
             </Button>
-          </Stack>
+          </Stack> */}
           <Outlet />
         </Stack>
       </Paper>

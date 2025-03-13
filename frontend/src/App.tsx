@@ -3,16 +3,19 @@ import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import { AuthProvider } from "./utils/auth/AuthProvider";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/auth" element={<AuthPage />}>
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-      </Route>
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/auth" element={<AuthPage />}>
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 }
 
