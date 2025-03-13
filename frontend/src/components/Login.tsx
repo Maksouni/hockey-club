@@ -5,7 +5,7 @@ import { useAuth } from "../utils/auth/useAuth";
 import { Link, useNavigate } from "react-router-dom";
 import { apiUrl } from "../utils/dotenv";
 
-export default function LoginPage() {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
