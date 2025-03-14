@@ -38,7 +38,6 @@ export default function Header() {
       onClick: () => {
         navigate("/");
       },
-      address: "/",
     },
     {
       title: "Поток",
@@ -46,29 +45,38 @@ export default function Header() {
       onClick: () => {
         navigate("/stream");
       },
-      address: "/stream",
     },
   ];
-  const DrawerItems2 = [
-    {
-      title: "Управление пользователями",
-      icon: <ManageAccountsIcon sx={{ color: "blue" }} />,
-      color: "blue",
-      onClick: () => {
-        navigate("/users");
-      },
-      address: "/users",
-    },
-    {
-      title: "Выйти из аккаунта",
-      icon: <ExitToAppIcon sx={{ color: "red" }} />,
-      color: "red",
-      onClick: () => {
-        logout();
-      },
-      address: "/",
-    },
-  ];
+  const DrawerItems2 =
+    isAuthenticated && role === "Администратор"
+      ? [
+          {
+            title: "Администрирование",
+            icon: <ManageAccountsIcon sx={{ color: "blue" }} />,
+            color: "blue",
+            onClick: () => {
+              navigate("/admin");
+            },
+          },
+          {
+            title: "Выйти из аккаунта",
+            icon: <ExitToAppIcon sx={{ color: "red" }} />,
+            color: "red",
+            onClick: () => {
+              logout();
+            },
+          },
+        ]
+      : [
+          {
+            title: "Выйти из аккаунта",
+            icon: <ExitToAppIcon sx={{ color: "red" }} />,
+            color: "red",
+            onClick: () => {
+              logout();
+            },
+          },
+        ];
 
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
