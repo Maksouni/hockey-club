@@ -1,5 +1,5 @@
 import { Box, Paper, Stack, Typography } from "@mui/material";
-import { Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 
 export default function AuthPage() {
   return (
@@ -20,6 +20,9 @@ export default function AuthPage() {
       <Paper elevation={3} sx={{ borderRadius: 4, p: "1rem", minWidth: "xl" }}>
         <Stack spacing={2} sx={{ p: 2, alignItems: "center" }}>
           <Typography variant="h4">Добро пожаловать!</Typography>
+          <NavLink to="/" style={{ textDecoration: "none" }}>
+            <Typography variant="body1">На главную</Typography>
+          </NavLink>
           {/* <Stack direction="row" spacing={2}>
             <Button variant="contained" onClick={() => navigate("/auth/login")}>
               Войти

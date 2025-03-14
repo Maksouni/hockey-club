@@ -6,4 +6,5 @@ export const AuthContext = createContext({
   login: (_token: string) => {},
   logout: () => {},
   role: "",
+  loading: true,
 });

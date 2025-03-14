@@ -8,7 +8,22 @@ interface PrivateRouteProps {
 export default function PrivateRoute({
   role: requiredRole,
 }: PrivateRouteProps) {
-  const { isAuthenticated, role } = useAuth();
+  const { isAuthenticated, role, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          margin: "auto",
+          padding: 4,
+          backgroundColor: "white",
+          textAlign: "center",
+        }}
+      >
+        Загрузка...
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/auth/login" />;

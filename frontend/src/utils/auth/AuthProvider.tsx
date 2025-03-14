@@ -11,37 +11,47 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = Cookies.get("jwt_token");
     if (token) {
-      try {
-        const getProfile = async () => {
+      const getProfile = async () => {
+        try {
           const response = await axios.get(`${apiUrl}/auth/profile`);
           setRole(response.data.role);
           setIsAuthenticated(true);
-        };
-        getProfile();
-      } catch (error) {
-        console.log(error);
-      }
+        } catch (error) {
+          console.log(error);
+          setIsAuthenticated(false);
+          setRole("");
+        } finally {
+          setLoading(false);
+        }
+      };
+      getProfile();
     } else {
-      setRole("");
       setIsAuthenticated(false);
+      setRole("");
+      setLoading(false);
     }
   }, []);
 
   const login = (token: string) => {
     Cookies.set("jwt_token", token, {
-      expires: 1, // жизнь токена
-      secure: false, // true - только через HTTPS
-      sameSite: "Strict", // куки отправляются только на тот же домен
+      expires: 1,
+      secure: false,
+      sameSite: "Strict",
     });
     setIsAuthenticated(true);
 
     const getProfile = async () => {
-      const response = await axios.get(`${apiUrl}/auth/profile`);
-      setRole(response.data.role);
+      try {
+        const response = await axios.get(`${apiUrl}/auth/profile`);
+        setRole(response.data.role);
+      } catch (error) {
+        console.log(error);
+      }
     };
     getProfile();
   };
@@ -53,7 +63,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, role }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, login, logout, role, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );
