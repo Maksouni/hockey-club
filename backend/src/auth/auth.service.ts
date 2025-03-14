@@ -29,4 +29,19 @@ export class AuthService {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
+
+  async signUp(email: string, pass: string) {
+    const hashedPassword = crypto
+      .createHash('sha256')
+      .update(pass)
+      .digest('hex');
+    const user = await this.usersService.createUser({
+      email,
+      password: hashedPassword,
+      roles: {
+        connect: { id: 5 },
+      },
+    });
+    return { id: user.id, email: user.email };
+  }
 }

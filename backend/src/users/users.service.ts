@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { Prisma, users } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -12,5 +12,23 @@ export class UsersService {
     return this.prisma.users.findUnique({
       where: userWhereUniqueInput,
     });
+  }
+
+  async createUser(data: Prisma.usersCreateInput): Promise<users> {
+    try {
+      return await this.prisma.users.create({
+        data,
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (
+          error.code === 'P2002' &&
+          (error.meta?.target as string[])?.includes('email')
+        ) {
+          throw new ConflictException('Email уже используется');
+        }
+      }
+      throw new Error(`Failed to create user: ${error.message}`);
+    }
   }
 }

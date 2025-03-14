@@ -52,6 +52,8 @@ export default function Register() {
           const { status, data } = error.response;
           if (status === 400) {
             setRegisterError(data.message || "Ошибка запроса");
+          } else if (status === 409) {
+            setRegisterError("Пользователь с таким email уже существует");
           } else {
             setRegisterError(
               `Ошибка сервера (${status}): ${
