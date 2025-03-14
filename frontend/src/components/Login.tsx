@@ -39,7 +39,7 @@ export default function Login() {
         password,
       });
 
-      login(response.data.token);
+      login(response.data.access_token);
       navigate("/");
     } catch (error) {
       if (axios.isAxiosError(error)) {

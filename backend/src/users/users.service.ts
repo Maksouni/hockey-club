@@ -14,6 +14,23 @@ export class UsersService {
     });
   }
 
+  async userRole(
+    userWhereUniqueInput: Prisma.usersWhereUniqueInput,
+  ): Promise<string> {
+    const user = await this.prisma.users.findUnique({
+      where: userWhereUniqueInput,
+      include: {
+        roles: true,
+      },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user.roles.name;
+  }
+
   async createUser(data: Prisma.usersCreateInput): Promise<users> {
     try {
       return await this.prisma.users.create({

@@ -11,12 +11,16 @@ import {
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { AuthGuard } from './auth.guard';
-import { Roles } from 'src/role/role.decorator';
-import { Role } from 'src/role/role.enum';
+import { UsersService } from 'src/users/users.service';
+// import { Roles } from 'src/role/role.decorator';
+// import { Role } from 'src/role/role.enum';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private usersService: UsersService,
+  ) {}
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -31,9 +35,10 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
-  @Roles(Role.Admin, Role.Coach)
   @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  async getProfile(@Request() req) {
+    const user = req.user;
+    const role = await this.usersService.userRole({ id: user.sub });
+    return { ...user, role };
   }
 }
