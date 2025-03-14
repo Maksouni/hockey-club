@@ -5,14 +5,34 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
+import * as crypto from 'crypto';
 import { Prisma } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Post()
+  async createUser(
+    @Body() data: { email: string; password: string; roleName: string },
+  ) {
+    const hashedPassword = crypto
+      .createHash('sha256')
+      .update(data.password)
+      .digest('hex');
+    const user = await this.usersService.createUser({
+      email: data.email,
+      password: hashedPassword,
+      roles: {
+        connect: { name: data.roleName },
+      },
+    });
+    return user;
+  }
 
   @Get()
   async getUsers(@Query('skip') skip?: string, @Query('take') take?: string) {
