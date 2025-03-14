@@ -1,6 +1,8 @@
 import { ReactNode, useState, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import Cookies from "js-cookie";
+import axios from "../api/axios";
+import { apiUrl } from "../dotenv";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -8,10 +10,25 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     const token = Cookies.get("jwt_token");
-    if (!token) setIsAuthenticated(false);
+    if (token) {
+      try {
+        const getProfile = async () => {
+          const response = await axios.get(`${apiUrl}/auth/profile`);
+          setRole(response.data.role);
+          setIsAuthenticated(true);
+        };
+        getProfile();
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setRole("");
+      setIsAuthenticated(false);
+    }
   }, []);
 
   const login = (token: string) => {
@@ -21,15 +38,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       sameSite: "Strict", // куки отправляются только на тот же домен
     });
     setIsAuthenticated(true);
+
+    const getProfile = async () => {
+      const response = await axios.get(`${apiUrl}/auth/profile`);
+      setRole(response.data.role);
+    };
+    getProfile();
   };
 
   const logout = () => {
     Cookies.remove("jwt_token");
     setIsAuthenticated(false);
+    setRole("");
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, role }}>
       {children}
     </AuthContext.Provider>
   );

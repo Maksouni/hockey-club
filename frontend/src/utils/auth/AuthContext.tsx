@@ -5,4 +5,5 @@ export const AuthContext = createContext({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   login: (_token: string) => {},
   logout: () => {},
+  role: "",
 });

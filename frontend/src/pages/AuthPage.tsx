@@ -10,10 +10,11 @@ export default function AuthPage() {
         justifyContent: "center",
         alignItems: "center",
         height: "100vh",
-        bgcolor: "#fff",
+        background:
+          "linear-gradient(45deg,rgb(158, 107, 254) 30%,rgb(83, 123, 255) 90%)",
       }}
     >
-      <Typography variant="h5" sx={{ marginBottom: "1.5rem" }}>
+      <Typography variant="h5" sx={{ marginBottom: "1.5rem", color: "white" }}>
         ХК «Паровоз»
       </Typography>
       <Paper elevation={3} sx={{ borderRadius: 4, p: "1rem", minWidth: "xl" }}>
