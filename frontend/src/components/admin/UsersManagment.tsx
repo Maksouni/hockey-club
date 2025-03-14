@@ -34,6 +34,9 @@ export default function UserManagement() {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  // Состояние для редактирования пользователя
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editUser, setEditUser] = useState<User | null>(null);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
   const [newUser, setNewUser] = useState({
     email: "",
@@ -58,10 +61,10 @@ export default function UserManagement() {
     fetchUsers();
   }, []);
 
+  // Диалог добавления пользователя
   const handleClickOpen = () => {
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -69,7 +72,6 @@ export default function UserManagement() {
   const handleConfirmOpen = () => {
     setConfirmOpen(true);
   };
-
   const handleConfirmClose = () => {
     setConfirmOpen(false);
   };
@@ -109,6 +111,42 @@ export default function UserManagement() {
     }
   };
 
+  // Обработчики для редактирования пользователя (popup)
+  const handleEditOpen = (user: User) => {
+    setEditUser(user);
+    setOpenEdit(true);
+  };
+
+  const handleEditClose = () => {
+    setOpenEdit(false);
+    setEditUser(null);
+  };
+
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!editUser) return;
+    const { name, value } = e.target;
+    setEditUser({ ...editUser, [name]: value });
+  };
+
+  const handleEditRoleChange = (e: SelectChangeEvent) => {
+    if (!editUser) return;
+    setEditUser({ ...editUser, roleName: e.target.value as Role });
+  };
+
+  const handleUpdateUser = async () => {
+    if (!editUser) return;
+    try {
+      await axios.patch(`${apiUrl}/users/${editUser.id}`, {
+        email: editUser.email,
+        roleId: RoleIds[editUser.roleName as unknown as keyof typeof RoleIds],
+      });
+      fetchUsers();
+      handleEditClose();
+    } catch (error) {
+      console.error("Ошибка при обновлении пользователя:", error);
+    }
+  };
+
   const filteredUsers = users.filter((user) =>
     user.email.toLowerCase().includes(search.toLowerCase())
   );
@@ -122,26 +160,37 @@ export default function UserManagement() {
     return `${datePart} ${timePart}`;
   };
 
+  // Добавлен столбец с кнопкой редактирования
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "email", headerName: "Email", width: 200, editable: true },
-    { field: "roleName", headerName: "Роль", width: 150, editable: true },
+    { field: "email", headerName: "Email", width: 200 },
+    { field: "roleName", headerName: "Роль", width: 150 },
     { field: "avatar_url", headerName: "Avatar URL", width: 200 },
     {
       field: "created_at",
       headerName: "Создан",
       width: 180,
-      renderCell: (params) => {
-        return <span>{formatDate(params.value as string)}</span>;
-      },
+      renderCell: (params) => <span>{formatDate(params.value as string)}</span>,
     },
     {
       field: "updated_at",
       headerName: "Обновлён",
       width: 180,
-      renderCell: (params) => {
-        return <span>{formatDate(params.value as string)}</span>;
-      },
+      renderCell: (params) => <span>{formatDate(params.value as string)}</span>,
+    },
+    {
+      field: "actions",
+      headerName: "Действия",
+      width: 150,
+      renderCell: (params) => (
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={() => handleEditOpen(params.row)}
+        >
+          Редактировать
+        </Button>
+      ),
     },
   ];
 
@@ -201,6 +250,7 @@ export default function UserManagement() {
         </Button>
       </Stack>
 
+      {/* Диалог добавления пользователя */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Добавить пользователя</DialogTitle>
         <DialogContent>
@@ -250,6 +300,7 @@ export default function UserManagement() {
         </DialogActions>
       </Dialog>
 
+      {/* Диалог подтверждения удаления */}
       <Dialog open={confirmOpen} onClose={handleConfirmClose}>
         <DialogTitle>Подтверждение удаления</DialogTitle>
         <DialogContent>
@@ -261,6 +312,46 @@ export default function UserManagement() {
           <Button onClick={handleConfirmClose}>Отмена</Button>
           <Button onClick={handleDeleteUsers} color="error">
             Удалить
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Диалог редактирования пользователя */}
+      <Dialog open={openEdit} onClose={handleEditClose}>
+        <DialogTitle>Редактировать пользователя</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            name="email"
+            label="Email"
+            type="email"
+            fullWidth
+            variant="standard"
+            value={editUser?.email || ""}
+            onChange={handleEditInputChange}
+          />
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="edit-role-label">Роль</InputLabel>
+            <Select
+              labelId="edit-role-label"
+              name="roleName"
+              value={editUser?.roleName || ""}
+              onChange={handleEditRoleChange}
+              variant="standard"
+            >
+              {Object.values(Role).map((role) => (
+                <MenuItem key={role as string} value={role}>
+                  {role}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleEditClose}>Отмена</Button>
+          <Button onClick={handleUpdateUser} color="primary">
+            Сохранить
           </Button>
         </DialogActions>
       </Dialog>
