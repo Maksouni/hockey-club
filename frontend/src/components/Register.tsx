@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { TextField, Button, Alert, Stack, Typography } from "@mui/material";
 import axios from "axios";
-import { useAuth } from "../utils/auth/useAuth";
 import { Link, useNavigate } from "react-router-dom";
 import { apiUrl } from "../utils/dotenv";
 
@@ -11,7 +10,6 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [registerError, setRegisterError] = useState<string | null>(null);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -37,13 +35,12 @@ export default function Register() {
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/auth/register`, {
+      await axios.post(`${apiUrl}/auth/register`, {
         email,
         password,
       });
 
-      login(response.data.token);
-      navigate("/");
+      navigate("/auth/login");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.code === "ERR_NETWORK") {
