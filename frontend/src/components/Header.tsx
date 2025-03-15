@@ -14,7 +14,6 @@ import {
   ListItemText,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import VideocamIcon from "@mui/icons-material/Videocam";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { useAuth } from "../utils/auth/useAuth";
@@ -39,44 +38,30 @@ export default function Header() {
         navigate("/");
       },
     },
-    {
-      title: "Поток",
-      icon: <VideocamIcon />,
-      onClick: () => {
-        navigate("/stream");
-      },
-    },
   ];
-  const DrawerItems2 =
-    isAuthenticated && role === "Администратор"
-      ? [
-          {
-            title: "Администрирование",
-            icon: <ManageAccountsIcon sx={{ color: "blue" }} />,
-            color: "blue",
-            onClick: () => {
-              navigate("/admin");
-            },
-          },
-          {
-            title: "Выйти из аккаунта",
-            icon: <ExitToAppIcon sx={{ color: "red" }} />,
-            color: "red",
-            onClick: () => {
-              logout();
-            },
-          },
-        ]
-      : [
-          {
-            title: "Выйти из аккаунта",
-            icon: <ExitToAppIcon sx={{ color: "red" }} />,
-            color: "red",
-            onClick: () => {
-              logout();
-            },
-          },
-        ];
+  const DrawerItems2 = [];
+
+  if (isAuthenticated && role === "Администратор") {
+    DrawerItems2.push({
+      title: "Администрирование",
+      icon: <ManageAccountsIcon sx={{ color: "blue" }} />,
+      color: "blue",
+      onClick: () => {
+        navigate("/admin");
+      },
+    });
+  }
+
+  if (isAuthenticated) {
+    DrawerItems2.push({
+      title: "Выйти из аккаунта",
+      icon: <ExitToAppIcon sx={{ color: "red" }} />,
+      color: "red",
+      onClick: () => {
+        logout();
+      },
+    });
+  }
 
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
