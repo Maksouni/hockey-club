@@ -36,13 +36,11 @@ export class UsersController {
 
   @Get()
   async getUsers(@Query('skip') skip?: string, @Query('take') take?: string) {
-    // Получаем пользователей через сервис
     const users = await this.usersService.users({
       skip: skip ? parseInt(skip, 10) : undefined,
       take: take ? parseInt(take, 10) : undefined,
     });
 
-    // Дополняем каждого пользователя информацией о роли
     const usersWithRoles = await Promise.all(
       users.map(async (user) => ({
         ...user,

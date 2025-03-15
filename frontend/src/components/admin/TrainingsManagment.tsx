@@ -60,19 +60,16 @@ export default function TrainingsManagement() {
     fetchTrainings();
   }, []);
 
-  // Открытие/закрытие диалогов
   const handleOpenAdd = () => setOpenAdd(true);
   const handleCloseAdd = () => setOpenAdd(false);
   const handleConfirmOpen = () => setConfirmOpen(true);
   const handleConfirmClose = () => setConfirmOpen(false);
 
-  // Обработчик ввода для новой тренировки
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewTraining((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Добавление тренировки
   const handleAddTraining = async () => {
     try {
       await axios.post(`${apiUrl}/trainings`, {
@@ -94,7 +91,6 @@ export default function TrainingsManagement() {
     }
   };
 
-  // Удаление выбранных тренировок
   const handleDeleteTrainings = async () => {
     try {
       for (const id of selectedTrainings) {
@@ -107,7 +103,6 @@ export default function TrainingsManagement() {
     }
   };
 
-  // Открытие диалога редактирования тренировки
   const handleEditOpen = (training: Training) => {
     setEditTraining(training);
     setOpenEdit(true);
@@ -118,14 +113,12 @@ export default function TrainingsManagement() {
     setEditTraining(null);
   };
 
-  // Обработчики ввода для редактируемой тренировки
   const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!editTraining) return;
     const { name, value } = e.target;
     setEditTraining({ ...editTraining, [name]: value });
   };
 
-  // Обновление тренировки
   const handleUpdateTraining = async () => {
     if (!editTraining) return;
     try {
@@ -144,12 +137,10 @@ export default function TrainingsManagement() {
     }
   };
 
-  // Фильтрация по названию тренировки
   const filteredTrainings = trainings.filter((training) =>
     training.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Функция форматирования даты
   const formatDate = (dateString: string): string => {
     if (!dateString) return "";
     const parts = dateString.split("T");
@@ -159,7 +150,6 @@ export default function TrainingsManagement() {
     return `${datePart} ${timePart}`;
   };
 
-  // Определение столбцов для DataGrid
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "title", headerName: "Название", width: 200 },

@@ -18,7 +18,7 @@ import {
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import axios from "../../utils/api/axios";
 import { apiUrl } from "../../utils/dotenv";
-import { Role, RoleIds } from "../../utils/role.enum"; // Adjust the import path as needed
+import { Role, RoleIds } from "../../utils/role.enum";
 
 interface User {
   id: number;
@@ -34,14 +34,14 @@ export default function UserManagement() {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  // Состояние для редактирования пользователя
+
   const [openEdit, setOpenEdit] = useState(false);
   const [editUser, setEditUser] = useState<User | null>(null);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
   const [newUser, setNewUser] = useState({
     email: "",
     password: "",
-    roleName: Role.Fan, // Default role
+    roleName: Role.Fan,
   });
 
   const fetchUsers = async () => {
@@ -61,7 +61,6 @@ export default function UserManagement() {
     fetchUsers();
   }, []);
 
-  // Диалог добавления пользователя
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -90,9 +89,9 @@ export default function UserManagement() {
       await axios.post(`${apiUrl}/users`, {
         email: newUser.email,
         password: newUser.password,
-        roleId: RoleIds[newUser.roleName as unknown as keyof typeof RoleIds], // Set role ID
+        roleId: RoleIds[newUser.roleName as unknown as keyof typeof RoleIds],
       });
-      fetchUsers(); // Refresh the user list
+      fetchUsers();
       handleClose();
     } catch (error) {
       console.error("Ошибка при добавлении пользователя:", error);
@@ -104,14 +103,13 @@ export default function UserManagement() {
       for (const userId of selectedUsers) {
         await axios.delete(`${apiUrl}/users/${userId}`);
       }
-      fetchUsers(); // Refresh the user list
+      fetchUsers();
       handleConfirmClose();
     } catch (error) {
       console.error("Ошибка при удалении пользователей:", error);
     }
   };
 
-  // Обработчики для редактирования пользователя (popup)
   const handleEditOpen = (user: User) => {
     setEditUser(user);
     setOpenEdit(true);
@@ -160,7 +158,6 @@ export default function UserManagement() {
     return `${datePart} ${timePart}`;
   };
 
-  // Добавлен столбец с кнопкой редактирования
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "email", headerName: "Email", width: 200 },

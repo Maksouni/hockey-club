@@ -49,6 +49,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       try {
         const response = await axios.get(`${apiUrl}/auth/profile`);
         setRole(response.data.role);
+        console.log(response.data.role);
       } catch (error) {
         console.log(error);
       }

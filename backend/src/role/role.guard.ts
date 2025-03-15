@@ -19,13 +19,12 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // Получаем требуемые роли из декоратора @Roles()
     const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
 
-    if (!requiredRoles) return true; // Если роли не заданы, доступ открыт
+    if (!requiredRoles) return true;
 
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers.authorization;
@@ -35,23 +34,19 @@ export class RolesGuard implements CanActivate {
     const token = authHeader.split(' ')[1];
 
     try {
-      // Декодируем токен и получаем ID пользователя
       const decoded = this.jwtService.verify(token);
       const userId = decoded.sub;
 
-      // Ищем пользователя в базе и загружаем его единственную роль
       const user = await this.prisma.users.findUnique({
         where: { id: userId },
-        include: { roles: true }, // У пользователя должна быть связь role (role: { name: 'Admin' })
+        include: { roles: true },
       });
 
       if (!user || !user.roles)
         throw new ForbiddenException('User not found or has no role');
 
-      // Получаем роль пользователя
       const userRole = user.roles.name as Role;
 
-      // Проверяем, соответствует ли его роль требуемым
       if (!requiredRoles.includes(userRole)) {
         throw new ForbiddenException('Access denied');
       }

@@ -6,10 +6,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: '*', // Разрешает запросы с любых доменов
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Разрешённые методы
-    allowedHeaders: 'Content-Type,Authorization', // Разрешённые заголовки
-    credentials: true, // Разрешает отправку cookies (если нужно)
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type,Authorization',
+    credentials: true,
   });
 
   app.useGlobalFilters(new AllExceptionsFilter());

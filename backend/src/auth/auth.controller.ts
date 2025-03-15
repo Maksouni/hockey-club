@@ -12,8 +12,6 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { AuthGuard } from './auth.guard';
 import { UsersService } from 'src/users/users.service';
-// import { Roles } from 'src/role/role.decorator';
-// import { Role } from 'src/role/role.enum';
 
 @Controller('auth')
 export class AuthController {

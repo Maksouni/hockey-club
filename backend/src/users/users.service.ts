@@ -94,7 +94,6 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    // Delete related records in other tables
     await this.prisma.players.updateMany({
       where: { user_id: user.id },
       data: { user_id: null },

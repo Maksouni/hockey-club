@@ -19,7 +19,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    // Получаем ответ исключения (может быть строкой или объектом)
     const errorResponse =
       exception instanceof HttpException ? exception.getResponse() : exception;
 
