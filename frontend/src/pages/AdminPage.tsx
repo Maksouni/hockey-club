@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import UserManagment from "../components/admin/UsersManagment";
 import TrainingsManagement from "../components/admin/TrainingsManagment";
+import EmployeesManagment from "../components/admin/EmployeesManagment";
 
 export default function AdminPage() {
   return (
@@ -17,10 +18,11 @@ export default function AdminPage() {
         maxWidth: "1200px",
       }}
     >
-      {/* users */}
       <UserManagment />
-      {/* trainings */}
+
       <TrainingsManagement />
+
+      <EmployeesManagment />
     </Box>
   );
 }
