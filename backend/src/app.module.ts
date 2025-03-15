@@ -6,9 +6,10 @@ import { UsersModule } from './users/users.module';
 import { RolesGuard } from './role/role.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { PrismaService } from './prisma/prisma.service';
+import { TrainingsModule } from './trainings/trainings.module';
 
 @Module({
-  imports: [AuthModule, UsersModule],
+  imports: [AuthModule, UsersModule, TrainingsModule],
   controllers: [AppController],
   providers: [
     AppService,
