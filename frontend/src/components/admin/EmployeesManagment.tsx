@@ -181,7 +181,7 @@ export default function EmployeesManagement() {
           onChange={(e) => setSearch(e.target.value)}
         />
         <Button variant="contained" color="success" onClick={handleOpenAdd}>
-          Добавить сотрудника
+          Добавить
         </Button>
       </Stack>
 
