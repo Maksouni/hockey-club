@@ -66,7 +66,7 @@ export default function TrainingsManagement() {
   const handleConfirmOpen = () => setConfirmOpen(true);
   const handleConfirmClose = () => setConfirmOpen(false);
 
-  // Обработчик ввода для нового тренинга
+  // Обработчик ввода для новой тренировки
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewTraining((prev) => ({ ...prev, [name]: value }));
