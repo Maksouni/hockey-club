@@ -24,9 +24,24 @@ export class AuthService {
     if (user.password !== hashedPassword) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.id, username: user.email };
+    const payload = { sub: user.id, email: user.email };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async signUp(email: string, pass: string) {
+    const hashedPassword = crypto
+      .createHash('sha256')
+      .update(pass)
+      .digest('hex');
+    const user = await this.usersService.createUser({
+      email,
+      password: hashedPassword,
+      roles: {
+        connect: { id: 5 },
+      },
+    });
+    return { id: user.id, email: user.email };
   }
 }

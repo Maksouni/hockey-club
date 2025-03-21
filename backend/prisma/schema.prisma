@@ -41,8 +41,8 @@ model fans {
   name       String    @db.VarChar(50)
   patronymic String?   @db.VarChar(50)
   birthdate  DateTime  @db.Date
-  user_id    Int
-  users      users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_id    Int?
+  users      users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   tickets    tickets[]
 }
 
@@ -108,7 +108,7 @@ model players {
   name                  String                  @db.VarChar(50)
   patronymic            String?                 @db.VarChar(50)
   birthdate             DateTime                @db.Date
-  user_id               Int
+  user_id               Int?
   countries_id          Int
   player_role_id        Int
   jersey_number         Int?
@@ -120,7 +120,7 @@ model players {
   player_statuses       player_statuses?        @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_players_player_statuses")
   countries             countries               @relation(fields: [countries_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   player_roles          player_roles            @relation(fields: [player_role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users                 users                   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                 users?                  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   training_participants training_participants[]
 }
 
@@ -132,7 +132,7 @@ model positions {
 
 model roles {
   id    Int     @id @default(autoincrement())
-  name  String  @db.VarChar(50)
+  name  String  @unique @db.VarChar(50)
   users users[]
 }
 
